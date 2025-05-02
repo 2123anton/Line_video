@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "Line Video 1.0",
+  "version": "1.0",
+  "description": "Расширение для работы с видео и линейкой",
+  "permissions": [
+    "storage", 
+    "downloads", 
+    "scripting", 
+    "tabs"
+  ],
+  "host_permissions": [
+    "*://tagme.sberdevices.ru/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://tagme.sberdevices.ru/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "commands": {
+    "toggle-features": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+H"
+      },
+      "description": "Включить/выключить все функции"
+    }
+  }
+}

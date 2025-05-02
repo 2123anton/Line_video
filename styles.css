@@ -1,0 +1,58 @@
+/* Базовые стили для линейки и элементов управления */
+
+/* Стиль для линейки */
+#horizon-line {
+  position: fixed;
+  background-color: lime; /* Кислотно-зеленый цвет */
+  z-index: 9999;
+  pointer-events: none; /* Линия не должна перехватывать события мыши */
+}
+
+/* Стиль для точки захвата - общий для обоих положений */
+#capture-point {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  background-color: rgba(0, 255, 0, 0.6); /* Полупрозрачный зеленый */
+  border: 2px solid rgba(0, 255, 0, 0.9); /* Более яркая граница */
+  border-radius: 50%;
+  cursor: move;
+  z-index: 10000;
+  pointer-events: auto; /* Точка захвата должна перехватывать события мыши */
+  box-shadow: 0 0 0 10px rgba(0, 255, 0, 0.1); /* Невидимая область вокруг точки для увеличения области захвата */
+}
+
+/* Стиль для кнопки показа/скрытия */
+#toggle-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(0, 255, 0, 0.7);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 10000;
+}
+
+/* Стили для темного режима - новый подход */
+.dark-mode-bg {
+  background-color: #121212 !important;
+  color: #f0f0f0 !important;
+}
+
+.dark-mode-text {
+  color: #f0f0f0 !important;
+}
+
+.dark-mode-border {
+  border-color: #444 !important;
+}
+
+/* Стили для регулировки яркости видео */
+.video-brightness {
+  filter: brightness(var(--brightness-level, 1));
+}
