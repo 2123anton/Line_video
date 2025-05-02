@@ -261,11 +261,6 @@ function createToggleButton() {
 function applyDarkMode(enabled) {
   isDarkMode = enabled;
   
-  // Проверяем, что мы на нужном сайте
-  if (!window.location.href.includes('tagme.sberdevices.ru')) {
-    return;
-  }
-  
   // Отправляем сообщение в background script для включения/выключения Auto Dark Mode
   chrome.runtime.sendMessage({
     action: 'toggleAutoDarkMode',
@@ -278,54 +273,53 @@ function applyDarkMode(enabled) {
 
 // Функция скачивания видео
 function downloadVideo() {
-  // Проверяем, что мы на нужном сайте
-  if (!window.location.href.includes('tagme.sberdevices.ru')) {
-    alert('Эта функция работает только на сайте tagme.sberdevices.ru');
-    return;
+  let videoSrc = null;
+
+  // 1. Все video
+  let videos = Array.from(document.querySelectorAll('video'));
+  for (let v of videos) {
+    if (v.src) { videoSrc = v.src; break; }
+    // 2. source внутри video
+    let sources = v.querySelectorAll('source');
+    for (let s of sources) { if (s.src) { videoSrc = s.src; break; } }
+    if (videoSrc) break;
   }
-  
-  // Ищем видео на странице
-  const videos = document.querySelectorAll('video');
-  
-  if (videos.length === 0) {
-    // Если видео не найдено, запрашиваем URL у пользователя
-    const videoUrl = prompt('Видео не найдено. Введите URL видео для скачивания:');
-    if (videoUrl) {
-      chrome.runtime.sendMessage({action: 'downloadVideo', url: videoUrl});
-    }
-    return;
+
+  // 3. blob: ссылки
+  if (!videoSrc) {
+    let blobs = Array.from(document.querySelectorAll('video')).map(v => v.src).filter(src => src && src.startsWith('blob:'));
+    if (blobs.length) videoSrc = blobs[0];
   }
-  
-  if (videos.length === 1) {
-    // Если найдено только одно видео, скачиваем его
-    const videoSrc = videos[0].src || videos[0].querySelector('source')?.src;
-    if (videoSrc) {
-      chrome.runtime.sendMessage({action: 'downloadVideo', url: videoSrc});
-    } else {
-      alert('Не удалось получить URL видео.');
+
+  // 4. iframe (YouTube и др.) — ищем video внутри iframe
+  if (!videoSrc) {
+    let iframes = document.querySelectorAll('iframe');
+    for (let frame of iframes) {
+      try {
+        let innerVideos = frame.contentDocument.querySelectorAll('video');
+        for (let v of innerVideos) {
+          if (v.src) { videoSrc = v.src; break; }
+          let sources = v.querySelectorAll('source');
+          for (let s of sources) { if (s.src) { videoSrc = s.src; break; } }
+          if (videoSrc) break;
+        }
+      } catch (e) { /* cross-origin */ }
+      if (videoSrc) break;
     }
-    return;
   }
-  
-  // Если найдено несколько видео, предлагаем выбрать
-  let videoOptions = '';
-  videos.forEach((video, index) => {
-    const src = video.src || video.querySelector('source')?.src;
-    if (src) {
-      videoOptions += `${index + 1}. ${src}\n`;
-    }
+
+  // 5. Если не найдено — запросить у пользователя
+  if (!videoSrc) {
+    videoSrc = prompt('Видео не найдено. Введите ссылку на видео вручную:');
+    if (!videoSrc) return alert('Видео не найдено!');
+  }
+
+  // Отправляем URL в background скрипт для скачивания
+  chrome.runtime.sendMessage({
+    action: 'downloadVideo',
+    url: videoSrc,
+    timestamp: Date.now()
   });
-  
-  const selectedIndex = prompt(`Найдено несколько видео. Выберите номер видео для скачивания:\n${videoOptions}`);
-  if (selectedIndex && !isNaN(selectedIndex) && selectedIndex > 0 && selectedIndex <= videos.length) {
-    const selectedVideo = videos[selectedIndex - 1];
-    const videoSrc = selectedVideo.src || selectedVideo.querySelector('source')?.src;
-    if (videoSrc) {
-      chrome.runtime.sendMessage({action: 'downloadVideo', url: videoSrc});
-    } else {
-      alert('Не удалось получить URL выбранного видео.');
-    }
-  }
 }
 
 function toggleAllFeatures() {

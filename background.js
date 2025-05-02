@@ -69,6 +69,7 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.set({
     lineVisible: true,
     isVertical: true,
-    darkMode: false
+    darkMode: false,
+    enabledSites: [] // Инициализируем пустой список разрешенных сайтов
   });
 });

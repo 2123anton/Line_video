@@ -275,83 +275,96 @@
 <body>
   <h1>Line Video 1.0</h1>
   
-  <!-- Управление линией -->
+  <!-- Включение расширения для сайта -->
   <div class="control-group">
-    <span class="control-label">Показать линию</span>
+    <span class="control-label">Включить для этого сайта</span>
     <div class="switch-container">
       <label class="switch">
-        <input type="checkbox" id="line-toggle" checked>
+        <input type="checkbox" id="site-toggle">
         <span class="slider round"></span>
       </label>
     </div>
   </div>
-  
-  <div class="control-group">
-    <span class="control-label">Ориентация линии</span>
-    <button id="orientation-toggle" class="btn">
-      <i class="material-icons">swap_horiz</i>
-      Изменить
+
+  <div id="controls-container" style="display: none;">
+    <!-- Управление линией -->
+    <div class="control-group">
+      <span class="control-label">Показать линию</span>
+      <div class="switch-container">
+        <label class="switch">
+          <input type="checkbox" id="line-toggle" checked>
+          <span class="slider round"></span>
+        </label>
+      </div>
+    </div>
+    
+    <div class="control-group">
+      <span class="control-label">Ориентация линии</span>
+      <button id="orientation-toggle" class="btn">
+        <i class="material-icons">swap_horiz</i>
+        Изменить
+      </button>
+    </div>
+    
+    <!-- Кнопка для Chrome Auto Dark Mode -->
+    <div class="control-group">
+      <span class="control-label">
+        Темный режим
+      </span>
+      <button id="auto-dark-mode-btn" class="btn">
+        <i class="material-icons">nights_stay</i>
+        Включить
+      </button>
+    </div>
+    
+    <!-- Кнопка информации о темном режиме -->
+    <button id="dark-mode-info-btn" class="info-btn">
+      <i class="material-icons">info_outline</i>
+      Информация о темном режиме
     </button>
-  </div>
-  
-  <!-- Кнопка для Chrome Auto Dark Mode -->
-  <div class="control-group">
-    <span class="control-label">
-      Темный режим
-    </span>
-    <button id="auto-dark-mode-btn" class="btn">
-      <i class="material-icons">nights_stay</i>
-      Включить
+    
+    <!-- Выпадающая информация о темном режиме -->
+    <div id="dark-mode-info" class="collapsible">
+      <p>Эта функция открывает настройки Chrome для включения встроенного темного режима для всех веб-страниц.</p>
+      <p><b>Как включить:</b></p>
+      <ol>
+        <li>Выберите "Enabled" в выпадающем списке</li>
+        <li>Нажмите кнопку "Relaunch" внизу страницы</li>
+      </ol>
+      <p>После перезапуска браузера все страницы будут отображаться в темном режиме.</p>
+    </div>
+    
+    <!-- Скачивание видео -->
+    <div class="control-group">
+      <span class="control-label">Скачать видео</span>
+      <button id="download-video" class="btn">
+        <i class="material-icons">file_download</i>
+        Скачать
+      </button>
+    </div>
+    
+    <button id="show-instr-btn">Инструкция</button>
+    
+    <div id="instructions">
+      <h2>Инструкция по использованию:</h2>
+      <p><b>Линия:</b> Используйте переключатель для отображения/скрытия линии. Линию можно перемещать, перетаскивая ее за зеленую точку.</p>
+      <p><b>Ориентация:</b> Нажмите кнопку "Изменить", чтобы переключить ориентацию линии между горизонтальной и вертикальной. После изменения линия будет отображаться по центру экрана.</p>
+      <p><b>Темный режим:</b> Нажмите кнопку "Включить", чтобы открыть настройки Chrome для включения темного режима для всех веб-страниц.</p>
+      <p><b>Скачать видео:</b> Нажмите кнопку "Скачать", чтобы скачать видео с текущей страницы. Если видео не найдено, появится окно для ввода URL.</p>
+    </div>
+    
+    <!-- Кнопка рекомендации -->
+    <button id="recommendation-btn" class="btn">
+      <i class="material-icons">lightbulb</i>
+      Рекомендация
     </button>
-  </div>
-  
-  <!-- Кнопка информации о темном режиме -->
-  <button id="dark-mode-info-btn" class="info-btn">
-    <i class="material-icons">info_outline</i>
-    Информация о темном режиме
-  </button>
-  
-  <!-- Выпадающая информация о темном режиме -->
-  <div id="dark-mode-info" class="collapsible">
-    <p>Эта функция открывает настройки Chrome для включения встроенного темного режима для всех веб-страниц.</p>
-    <p><b>Как включить:</b></p>
-    <ol>
-      <li>Выберите "Enabled" в выпадающем списке</li>
-      <li>Нажмите кнопку "Relaunch" внизу страницы</li>
-    </ol>
-    <p>После перезапуска браузера все страницы будут отображаться в темном режиме.</p>
-  </div>
-  
-  <!-- Скачивание видео -->
-  <div class="control-group">
-    <span class="control-label">Скачать видео</span>
-    <button id="download-video" class="btn">
-      <i class="material-icons">file_download</i>
-      Скачать
-    </button>
-  </div>
-  
-  <button id="show-instr-btn">Инструкция</button>
-  
-  <div id="instructions">
-    <h2>Инструкция по использованию:</h2>
-    <p><b>Линия:</b> Используйте переключатель для отображения/скрытия линии. Линию можно перемещать, перетаскивая ее за зеленую точку.</p>
-    <p><b>Ориентация:</b> Нажмите кнопку "Изменить", чтобы переключить ориентацию линии между горизонтальной и вертикальной. После изменения линия будет отображаться по центру экрана.</p>
-    <p><b>Темный режим:</b> Нажмите кнопку "Включить", чтобы открыть настройки Chrome для включения темного режима для всех веб-страниц.</p>
-    <p><b>Скачать видео:</b> Нажмите кнопку "Скачать", чтобы скачать видео с текущей страницы. Если видео не найдено, появится окно для ввода URL.</p>
-  </div>
-  
-  <!-- Кнопка рекомендации -->
-  <button id="recommendation-btn" class="btn">
-    <i class="material-icons">lightbulb</i>
-    Рекомендация
-  </button>
-  
-  <!-- Выпадающий элемент с рекомендацией -->
-  <div id="recommendation-content" class="recommendation-content">
-    <p><b>Совет:</b> Для определения черного цвета и засветов на видео используйте инструмент "Цветная пипетка".</p>
-    <p>Это расширение позволяет определить точный цвет любого пикселя на странице.</p>
-    <p><a href="https://chromewebstore.google.com/detail/%D0%B8%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BC%D0%B5%D0%BD%D1%82-%D1%86%D0%B2%D0%B5%D1%82%D0%BD%D0%B0%D1%8F-%D0%BF%D0%B8%D0%BF%D0%B5%D1%82%D0%BA%D0%B0/lobiadjfmkomemokdfhiaaaidgdhcded" target="_blank">Установить расширение "Цветная пипетка"</a></p>
+    
+    <!-- Выпадающий элемент с рекомендацией -->
+    <div id="recommendation-content" class="recommendation-content">
+      <p><b>Совет:</b> Для определения черного цвета и засветов на видео используйте инструмент "Цветная пипетка".</p>
+      <p>Это расширение позволяет определить точный цвет любого пикселя на странице.</p>
+      <p><a href="https://chromewebstore.google.com/detail/%D0%B8%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BC%D0%B5%D0%BD%D1%82-%D1%86%D0%B2%D0%B5%D1%82%D0%BD%D0%B0%D1%8F-%D0%BF%D0%B8%D0%BF%D0%B5%D1%82%D0%BA%D0%B0/lobiadjfmkomemokdfhiaaaidgdhcded" target="_blank">Установить расширение "Цветная пипетка"</a></p>
+    </div>
   </div>
   
   <script src="popup.js"></script>

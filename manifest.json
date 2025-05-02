@@ -10,11 +10,11 @@
     "tabs"
   ],
   "host_permissions": [
-    "*://tagme.sberdevices.ru/*"
+    "<all_urls>"
   ],
   "content_scripts": [
     {
-      "matches": ["*://tagme.sberdevices.ru/*"],
+      "matches": ["<all_urls>"],
       "js": ["content.js"],
       "css": ["styles.css"]
     }

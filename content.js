@@ -7,16 +7,42 @@ let capturePoint = null;
 let toggleButton = null;
 let isDarkMode = false;
 let hotKeyEnabled = true;
+let isEnabled = false;
 const CAPTURE_OFFSET = 15; // px внутрь экрана
 
-// Инициализация
-if (document.readyState === 'interactive' || document.readyState === 'complete') {
-  initializeExtension();
-} else {
-  document.addEventListener('DOMContentLoaded', initializeExtension);
+// Проверяем, включено ли расширение для текущего сайта
+function checkSiteEnabled() {
+  const domain = window.location.hostname;
+  return new Promise((resolve) => {
+    chrome.storage.local.get(['enabledSites'], function(data) {
+      const enabledSites = data.enabledSites || [];
+      isEnabled = enabledSites.includes(domain);
+      resolve(isEnabled);
+    });
+  });
 }
 
-function initializeExtension() {
+// Очищаем все элементы расширения со страницы
+function clearExtensionElements() {
+  if (lineElement) {
+    lineElement.remove();
+    lineElement = null;
+  }
+  if (capturePoint) {
+    capturePoint.remove();
+    capturePoint = null;
+  }
+  if (toggleButton) {
+    toggleButton.remove();
+    toggleButton = null;
+  }
+}
+
+// Инициализация
+async function initializeExtension() {
+  const enabled = await checkSiteEnabled();
+  if (!enabled) return;
+
   chrome.storage.local.get(['lineVisible', 'isVertical', 'darkMode', 'hotKeyEnabled'], function(data) {
     isLineVisible = data.lineVisible || false;
     isVertical = data.isVertical !== undefined ? data.isVertical : true;
@@ -26,23 +52,43 @@ function initializeExtension() {
     if (isLineVisible) createLine();
     if (isDarkMode) applyDarkMode(true);
   });
-
-  chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-    if (message.action === 'toggleLine') {
-      toggleLine(message.visible);
-    } else if (message.action === 'toggleOrientation') {
-      toggleOrientation();
-    } else if (message.action === 'toggleDarkMode') {
-      applyDarkMode(message.enabled);
-    } else if (message.action === 'downloadVideo') {
-      downloadVideo();
-    }
-  });
-
-  document.addEventListener('keydown', function(e) {
-    if (hotKeyEnabled && e.ctrlKey && e.shiftKey && e.key === 'H') toggleAllFeatures();
-  });
 }
+
+if (document.readyState === 'interactive' || document.readyState === 'complete') {
+  initializeExtension();
+} else {
+  document.addEventListener('DOMContentLoaded', initializeExtension);
+}
+
+// Обработчик сообщений
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+  if (message.action === 'siteToggled') {
+    isEnabled = message.enabled;
+    if (!isEnabled) {
+      clearExtensionElements();
+    } else {
+      initializeExtension();
+    }
+    return;
+  }
+
+  if (!isEnabled) return;
+
+  switch (message.action) {
+    case 'toggleLine':
+      toggleLine(message.visible);
+      break;
+    case 'toggleOrientation':
+      toggleOrientation();
+      break;
+    case 'toggleDarkMode':
+      applyDarkMode(message.enabled);
+      break;
+    case 'downloadVideo':
+      downloadVideo();
+      break;
+  }
+});
 
 function createToggleButton() {
   if (toggleButton) return;
@@ -202,11 +248,6 @@ function toggleLine() {
 function applyDarkMode(enabled) {
   isDarkMode = enabled;
   
-  // Проверяем, что мы на нужном сайте
-  if (!window.location.href.includes('tagme.sberdevices.ru')) {
-    return;
-  }
-  
   // Отправляем сообщение в background script для включения/выключения Auto Dark Mode
   chrome.runtime.sendMessage({
     action: 'toggleAutoDarkMode',
@@ -219,12 +260,6 @@ function applyDarkMode(enabled) {
 
 // Функция скачивания видео
 function downloadVideo() {
-  // Проверяем, что мы на нужном сайте
-  if (!window.location.href.includes('tagme.sberdevices.ru')) {
-    alert('Эта функция работает только на сайте tagme.sberdevices.ru');
-    return;
-  }
-
   let videoSrc = null;
 
   // 1. Все video
@@ -262,7 +297,7 @@ function downloadVideo() {
 
   // 5. Если не найдено — запросить у пользователя
   if (!videoSrc) {
-    videoSrc = prompt('Видео не найдено автоматически. Введите ссылку на видео вручную:');
+    videoSrc = prompt('Видео не найдено. Введите ссылку на видео вручную:');
     if (!videoSrc) return alert('Видео не найдено!');
   }
 

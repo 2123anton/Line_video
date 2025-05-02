@@ -12,31 +12,87 @@ document.addEventListener('DOMContentLoaded', function() {
   const instructionsDiv = document.getElementById('instructions');
   const recommendationBtn = document.getElementById('recommendation-btn');
   const recommendationContent = document.getElementById('recommendation-content');
+  const siteToggle = document.getElementById('site-toggle');
+  const controlsContainer = document.getElementById('controls-container');
   
-  // Функция для проверки, находимся ли мы на целевом сайте
-  function isTargetPage(url) {
-    return url.includes('tagme.sberdevices.ru');
-  }
-
   // Функция для безопасной отправки сообщений
   function sendMessageToContentScript(message) {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      if (tabs[0] && isTargetPage(tabs[0].url)) {
+      if (tabs[0]) {
         chrome.tabs.sendMessage(tabs[0].id, message, function(response) {
           if (chrome.runtime.lastError) {
             console.log('Error sending message:', chrome.runtime.lastError);
           }
         });
-      } else {
-        alert('Это расширение работает только на сайте tagme.sberdevices.ru');
       }
     });
   }
   
+  // Получаем текущий домен
+  function getCurrentDomain() {
+    return new Promise((resolve) => {
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        if (tabs[0]?.url) {
+          const url = new URL(tabs[0].url);
+          resolve(url.hostname);
+        } else {
+          resolve(null);
+        }
+      });
+    });
+  }
+
+  // Проверяем, включено ли расширение для текущего сайта
+  async function checkSiteEnabled() {
+    const domain = await getCurrentDomain();
+    if (!domain) return;
+
+    chrome.storage.local.get(['enabledSites'], function(data) {
+      const enabledSites = data.enabledSites || [];
+      const isEnabled = enabledSites.includes(domain);
+      siteToggle.checked = isEnabled;
+      controlsContainer.style.display = isEnabled ? 'block' : 'none';
+    });
+  }
+
+  // Обработчик переключения сайта
+  siteToggle.addEventListener('change', async function() {
+    const domain = await getCurrentDomain();
+    if (!domain) return;
+
+    chrome.storage.local.get(['enabledSites'], function(data) {
+      const enabledSites = data.enabledSites || [];
+      const isEnabled = siteToggle.checked;
+      
+      if (isEnabled && !enabledSites.includes(domain)) {
+        enabledSites.push(domain);
+      } else if (!isEnabled) {
+        const index = enabledSites.indexOf(domain);
+        if (index > -1) {
+          enabledSites.splice(index, 1);
+        }
+      }
+
+      chrome.storage.local.set({enabledSites: enabledSites}, function() {
+        controlsContainer.style.display = isEnabled ? 'block' : 'none';
+        // Отправляем сообщение в content script
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+          chrome.tabs.sendMessage(tabs[0].id, {
+            action: 'siteToggled',
+            enabled: isEnabled
+          });
+        });
+      });
+    });
+  });
+
   // Загружаем сохраненные настройки
   chrome.storage.local.get(['lineVisible', 'isVertical'], function(data) {
     lineToggle.checked = data.lineVisible !== false;
   });
+
+  // Инициализация при открытии popup
+  checkSiteEnabled();
   
   // Обработчик переключения линии
   lineToggle.addEventListener('change', function() {
@@ -72,16 +128,5 @@ document.addEventListener('DOMContentLoaded', function() {
   // Обработчик кнопки рекомендации
   recommendationBtn.addEventListener('click', function() {
     recommendationContent.classList.toggle('active');
-  });
-
-  // Проверяем текущую страницу при загрузке попапа
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    if (tabs[0] && !isTargetPage(tabs[0].url)) {
-      // Если мы не на целевом сайте, отключаем интерактивные элементы
-      lineToggle.disabled = true;
-      orientationToggle.disabled = true;
-      downloadVideoBtn.disabled = true;
-      alert('Это расширение работает только на сайте tagme.sberdevices.ru');
-    }
   });
 });

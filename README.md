@@ -1,11 +1,11 @@
 # Line Video 1.0
 
-Браузерное расширение для работы с видео контентом на tagme.sberdevices.ru | Browser extension for working with video content on tagme.sberdevices.ru
+Браузерное расширение для работы с видео контентом | Browser extension for working with video content
 
 ## Русский
 
 ### Описание
-Расширение для браузера Chrome, предназначенное для работы с видео контентом на платформе tagme.sberdevices.ru. Добавляет удобные инструменты для измерения элементов видео и скачивания контента.
+Расширение для браузера Chrome, предназначенное для работы с видео контентом на веб-страницах. Добавляет удобные инструменты для измерения элементов видео и скачивания контента.
 
 ### Возможности
 - Горизонтальная/вертикальная линейка для измерения элементов видео
@@ -29,7 +29,7 @@
    - Расширение должно появиться в списке установленных
 
 ### Использование
-1. Откройте сайт tagme.sberdevices.ru
+1. Откройте страницу с видео в браузере
 2. Нажмите на иконку расширения в панели инструментов
 3. Используйте переключатель для отображения/скрытия линейки
 4. Нажмите "Изменить" для смены ориентации линейки
@@ -42,14 +42,13 @@
 
 ### Требования
 - Браузер Google Chrome (последняя версия)
-- Доступ к сайту tagme.sberdevices.ru
 
 ---
 
 ## English
 
 ### Description
-A Chrome browser extension designed for working with video content on the tagme.sberdevices.ru platform. Adds convenient tools for measuring video elements and downloading content.
+A Chrome browser extension designed for working with video content on web pages. Adds convenient tools for measuring video elements and downloading content.
 
 ### Features
 - Horizontal/vertical ruler for measuring video elements
@@ -73,7 +72,7 @@ A Chrome browser extension designed for working with video content on the tagme.
    - The extension should appear in your installed extensions list
 
 ### Usage
-1. Open tagme.sberdevices.ru
+1. Open a page with video content in your browser
 2. Click the extension icon in the toolbar
 3. Use the toggle switch to show/hide the ruler
 4. Click "Change" to switch ruler orientation
@@ -86,4 +85,3 @@ A Chrome browser extension designed for working with video content on the tagme.
 
 ### Requirements
 - Google Chrome browser (latest version)
-- Access to tagme.sberdevices.ru
